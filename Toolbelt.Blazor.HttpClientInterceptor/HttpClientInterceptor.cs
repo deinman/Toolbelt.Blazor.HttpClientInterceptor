@@ -36,13 +36,13 @@ namespace Toolbelt.Blazor
         internal async Task InvokeBeforeSendAsync(HttpClientInterceptorEventArgs args)
         {
             this.BeforeSend?.Invoke(this, args);
-            await InvokeAsync(this.BeforeSendAsync, args);
+            await this.InvokeAsync(this.BeforeSendAsync, args);
         }
 
         internal async Task InvokeAfterSendAsync(HttpClientInterceptorEventArgs args)
         {
             this.AfterSend?.Invoke(this, args);
-            await InvokeAsync(this.AfterSendAsync, args);
+            await this.InvokeAsync(this.AfterSendAsync, args);
         }
 
         private async Task InvokeAsync(HttpClientInterceptorEventHandler asyncEventHandler, HttpClientInterceptorEventArgs args)

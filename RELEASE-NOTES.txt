@@ -1,3 +1,6 @@
+v.11.0.0
+- BREAKING CHANGE: Migrate to reference NET6.0, NET7.0, and NET8.0 instead of netstandard.
+
 v.10.2.0
 - Improve: GetCapturedContentAsync() will proceed even if the response has illegal content headers.
 

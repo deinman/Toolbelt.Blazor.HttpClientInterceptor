@@ -12,7 +12,7 @@ namespace Toolbelt.Blazor.Extensions.DependencyInjection
     /// </summary>
     public static class HttpClientInterceptorExtension
     {
-        private static readonly FieldInfo HandlerField = typeof(HttpMessageInvoker).GetField("_handler", BindingFlags.Instance | BindingFlags.NonPublic);
+        private static readonly FieldInfo HandlerField = typeof(HttpMessageInvoker).GetField("_handler", BindingFlags.Instance | BindingFlags.NonPublic)!;
 
         /// <summary>
         ///  Adds a HttpClientInterceptor service to the specified Microsoft.Extensions.DependencyInjection.IServiceCollection.
@@ -20,14 +20,14 @@ namespace Toolbelt.Blazor.Extensions.DependencyInjection
         /// <param name="services">The Microsoft.Extensions.DependencyInjection.IServiceCollection to add the service to.</param>
         public static void AddHttpClientInterceptor(this IServiceCollection services)
         {
-            services.TryAddSingleton(services =>
+            services.TryAddSingleton(serviceProvider =>
             {
                 if (HandlerField != null)
                 {
                     var httpClient = default(HttpClient);
                     try
                     {
-                        httpClient = services.GetService<HttpClient>();
+                        httpClient = serviceProvider.GetService<HttpClient>();
                     }
                     catch (InvalidOperationException e) when (e.Source == "Microsoft.Extensions.DependencyInjection" && e.HResult == -2146233079)
                     {
@@ -35,23 +35,23 @@ namespace Toolbelt.Blazor.Extensions.DependencyInjection
 
                     if (httpClient != null)
                     {
-                        httpClient.EnableIntercept(services);
+                        httpClient.EnableIntercept(serviceProvider);
                     }
                 }
 
                 return new HttpClientInterceptor();
             });
 
-            services.TryAddSingleton(services =>
+            services.TryAddSingleton(serviceProvider =>
             {
-                var interceptor = services.GetService<HttpClientInterceptor>();
-                return (IHttpClientInterceptor)interceptor;
+                var interceptor = serviceProvider.GetService<HttpClientInterceptor>();
+                return (IHttpClientInterceptor)interceptor!;
             });
         }
 
         public static HttpClient EnableIntercept(this HttpClient httpClient, IServiceProvider services)
         {
-            if (HandlerField?.GetValue(httpClient) is HttpMessageHandler baseHandler && !(baseHandler is HttpClientInterceptorHandler))
+            if (HandlerField.GetValue(httpClient) is HttpMessageHandler baseHandler && !(baseHandler is HttpClientInterceptorHandler))
             {
                 var interceptorHandler = new HttpClientInterceptorHandler(services, baseHandler);
                 HandlerField.SetValue(httpClient, interceptorHandler);

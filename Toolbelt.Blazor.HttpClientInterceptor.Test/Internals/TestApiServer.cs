@@ -18,7 +18,7 @@ namespace Toolbelt.Blazor.Test.Internals
                 {
                     context.Response.StatusCode = 500;
                     context.Response.ContentType = "application/json";
-                    context.Response.Headers.Add("Expires", "-1");
+                    context.Response.Headers.Append("Expires", "-1");
                     await context.Response.WriteAsync("{\"status\":500,\"error\":\"hello.\"}");
                 });
             }
